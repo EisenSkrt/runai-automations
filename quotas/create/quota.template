@@ -1,0 +1,9 @@
+kind: ResourceQuota
+apiVersion: v1
+metadata:
+  name: quota-runai-$RUNAI_PROJECT
+  namespace: runai-$RUNAI_PROJECT
+spec:
+  hard:
+    limits.cpu: '$CPU'
+    limits.memory: '$RAM'

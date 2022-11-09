@@ -1,0 +1,47 @@
+{
+  "name": "$DEPARTMENT_NAME",
+  "deservedGpus": $GPUS,
+  "allowOverQuota": $ALLOW_OVER_QUOTA,
+  "maxAllowedGpus": $MAX_GPUS,
+  "resources": {
+    "gpu": {
+      "deserved": 0,
+      "maxAllowed": $MAX_GPUS,
+      "overQuotaWeight": 2
+    },
+    "cpu": {
+      "deserved": 0,
+      "maxAllowed": 1000,
+      "overQuotaWeight": 2
+    },
+    "memory": {
+      "deserved": 0,
+      "maxAllowed": 1000,
+      "overQuotaWeight": 2
+    }
+  },
+  "nodePoolsResources": [
+    {
+      "id": 0,
+      "nodePool": {
+        "id": 3,
+        "name": "default"
+      },
+      "gpu": {
+        "deserved": 0,
+        "maxAllowed": 1000,
+        "overQuotaWeight": 2
+      },
+      "cpu": {
+        "deserved": 0,
+        "maxAllowed": 1000,
+        "overQuotaWeight": 2
+      },
+      "memory": {
+        "deserved": 0,
+        "maxAllowed": 1000,
+        "overQuotaWeight": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+kind: ResourceQuota
+apiVersion: v1
+metadata:
+  name: quota-runai-dolev
+  namespace: runai-dolev
+spec:
+  hard:
+    limits.cpu: '0'
+    limits.memory: '0'
