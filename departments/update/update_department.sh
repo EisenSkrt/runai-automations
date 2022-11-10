@@ -3,7 +3,7 @@
 export HOSTNAME=runai.apps.ocpgpu.octopus.labs
 export CLUSTER_NAME=c100
 
-while getopts 'd:n:o:g:' OPTION; do
+while getopts 'd:n:o:g:p:h' OPTION; do
   case "$OPTION" in
     d)
       export DEPARTMENT_NAME=$OPTARG
@@ -17,8 +17,65 @@ while getopts 'd:n:o:g:' OPTION; do
     o)
       export ALLOW_OVER_QUOTA=$OPTARG
       ;;
+    p)
+      export PROJECTS=$OPTARG
+      ;;
+    h)
+      echo "Sciprt usage: ./update_department [-d <department-name>] [-n <new-department-name>] [-g <new-gpu-count>] [-o <allow-over-quota>] [-p <projects-to-create-under-department>] [-h]
+      -d The current name of the department you are looking to edit, Flag is required.
+            Usage: -d mlops
+
+      -n The new name you'd like to assign to the department, Flag is optional.
+            Usage: -n new-name
+
+      -g The new GPU quota you'd like to assign to the department, Flag is optional.
+            Usage: -g 42
+
+      -o Whether you'd like to change the over-quota permissions for the department, and what you'd like to change it to, Flag is optional.
+            Usage: -o false
+	           -o true
+	 
+      -p List of projects to create and link to this department, Projects will be created with a default of 1 GPU, Flag is optional.
+            Usage: -p 'proj1 proj2 proj3'
+
+      -h To get help and description of how to use the script, Flag is optional.
+             Usage: -h
+
+Examples:
+./update_department.sh -d mlops -n mlops-new
+./update_department.sh -d mlops -g 3
+./update_department.sh -d mlops -o true
+./update_department.sh -d mlops -p 'new-proj1 new-proj2
+./update_department.sh -d mlops -n mlops-new -g 3 -o false -p 'api-new api-new-proj'"
+      exit 1
+      ;;
     ?)
-      echo "script usage: $(basename \$0) [-l] [-h] [-a somevalue]" >&2
+      echo "Sciprt usage: ./update_department [-d <department-name>] [-n <new-department-name>] [-g <new-gpu-count>] [-o <allow-over-quota>] [-p <projects-to-create-under-department>] [-h]
+      -d The current name of the department you are looking to edit, Flag is required.
+            Usage: -d mlops
+
+      -n The new name you'd like to assign to the department, Flag is optional.
+            Usage: -n new-name
+
+      -g The new GPU quota you'd like to assign to the department, Flag is optional.
+            Usage: -g 42
+
+      -o Whether you'd like to change the over-quota permissions for the department, and what you'd like to change it to, Flag is optional.
+            Usage: -o false
+                   -o true
+
+      -p List of projects to create and link to this department, Projects will be created with a default of 1 GPU, Flag is optional.
+            Usage: -p 'proj1 proj2 proj3'
+
+      -h To get help and description of how to use the script, Flag is optional.
+             Usage: -h
+
+Examples:
+./update_department.sh -d mlops -n mlops-new
+./update_department.sh -d mlops -g 3
+./update_department.sh -d mlops -o true
+./update_department.sh -d mlops -p 'new-proj1 new-proj2
+./update_department.sh -d mlops -n mlops-new -g 3 -o false -p 'api-new api-new-proj'"
       exit 1
       ;;
   esac
@@ -29,7 +86,7 @@ shift "$(($OPTIND -1))"
 #Validy check
 [ -z "$DEPARTMENT_NAME" ] && echo "Missing -d <department-name>" && exit 1
 
-HOSTNAME=runai.apps.ocpgpu.octopus.labs
+[ -n "$PROJECTS" ] && export PROJECTS=( $PROJECTS )
 
 #Token for API
 ACCESS_TOKEN=$(curl -X POST "https://${HOSTNAME}/auth/realms/runai/protocol/openid-connect/token" \
@@ -87,3 +144,9 @@ curl -X 'PUT' \
   --header "Authorization: Bearer ${ACCESS_TOKEN}" \
   --insecure \
   -d "$DEPARTMENT"
+  
+for i in "${PROJECTS[@]}"
+do
+   :
+   ../../project/create/create_project.sh -p $i -g 1 -d $DEPARTMENT_NAME
+done
